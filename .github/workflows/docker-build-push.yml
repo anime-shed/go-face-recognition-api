@@ -33,13 +33,13 @@ jobs:
           file: Dockerfile  # Adjust if your Dockerfile has a different name or path
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/go-face-recognition-api:latest
+            ghcr.io/${{ github.repository }}:latest
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Generate artifact attestation
         id: attest
         uses: actions/attest-build-provenance@v2
         with:
-          subject-name: ghcr.io/${{ github.repository }}/go-face-recognition-api
+          subject-name: ghcr.io/${{ github.repository }}
           subject-digest: ${{ steps.build.outputs.digest }}  # Reference the digest output
           push-to-registry: true
