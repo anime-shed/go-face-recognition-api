@@ -36,8 +36,6 @@ type LimitsConfig struct {
 	MaxImageSize int64
 	MaxWidth     int
 	MaxHeight    int
-	RateLimit    int
-	RateBurst    int
 }
 
 // Load loads configuration from environment variables with defaults
@@ -61,8 +59,6 @@ func Load() *Config {
 			MaxImageSize: getInt64Env("MAX_IMAGE_SIZE", 5242880), // 5MB
 			MaxWidth:     getIntEnv("MAX_WIDTH", 2000),
 			MaxHeight:    getIntEnv("MAX_HEIGHT", 2000),
-			RateLimit:    getIntEnv("RATE_LIMIT", 100),
-			RateBurst:    getIntEnv("RATE_BURST", 10),
 		},
 	}
 }

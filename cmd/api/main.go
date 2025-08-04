@@ -11,8 +11,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/time/rate"
-
 	"face-recognition-api/internal/config"
 	"face-recognition-api/internal/handlers"
 	"face-recognition-api/internal/middleware"
@@ -48,17 +46,12 @@ func main() {
 	faceHandler := handlers.NewFaceHandler(faceDetector, imageDownloader, imageProcessor, logger)
 	healthHandler := handlers.NewHealthHandler(logger)
 
-	// Initialize middleware
-	rateLimiter := middleware.NewRateLimiter(rate.Limit(cfg.Limits.RateLimit), cfg.Limits.RateBurst)
-
 	// Setup router
 	router := mux.NewRouter()
 
 	// Apply global middleware
-	router.Use(middleware.CORSMiddleware)
 	router.Use(middleware.LoggingMiddleware(logger))
 	router.Use(middleware.RecoveryMiddleware(logger))
-	router.Use(rateLimiter.Middleware)
 
 	// API routes
 	api := router.PathPrefix("/api/v1").Subrouter()

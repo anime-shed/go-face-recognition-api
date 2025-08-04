@@ -1,15 +1,14 @@
 # Go Face Recognition API
 
-A production-ready Go face recognition API using the `pigo` library for face detection. This internal service processes images from Azure blob storage URLs and provides face detection, validation, and visual marking capabilities.
+A Go face recognition API using the `pigo` library for face detection. This internal service processes images from PUBLIC URLs and provides face detection, validation, and visual marking capabilities.
 
 ## Features
 
 - **Face Detection**: Detect faces in images from URLs
 - **Selfie Validation**: Validate selfie quality based on face count and confidence
 - **Visual Detection**: Return images with face markers drawn as circles
-- **Health Checks**: Comprehensive health, readiness, and liveness endpoints
-- **Metrics**: Prometheus metrics endpoint
-- **Rate Limiting**: Per-IP rate limiting
+- **Health Checks**: Comprehensive health, readiness, and liveness endpoints for Kubernetes
+- **Metrics**: Prometheus metrics endpoint for monitoring
 - **Graceful Shutdown**: Proper context-based shutdown handling
 - **Structured Logging**: JSON-formatted logs with logrus
 
@@ -79,10 +78,10 @@ The application can be configured using environment variables:
 | `MAX_IMAGE_SIZE` | `5242880` | Max image size (5MB) |
 | `MAX_WIDTH` | `2000` | Max image width |
 | `MAX_HEIGHT` | `2000` | Max image height |
-| `RATE_LIMIT` | `100` | Rate limit per second |
-| `RATE_BURST` | `10` | Rate limit burst |
-| `PIGO_MIN_SIZE` | `20` | Minimum face size |
-| `PIGO_MAX_SIZE` | `1000` | Maximum face size |
+| `PIGO_MIN_SIZE` | `25` | Minimum face size for detection |
+| `PIGO_MAX_SIZE` | `1000` | Maximum face size for detection |
+| `PIGO_MIN_CONFIDENCE` | `12.0` | Minimum confidence threshold |
+| `PIGO_IOU_THRESHOLD` | `0.6` | IoU threshold for face clustering |
 
 ## API Examples
 
@@ -180,34 +179,28 @@ internal/
 └── config/        # Configuration
 ```
 
-## Security Features
-
-- **Input Validation**: URL and parameter validation
-- **Rate Limiting**: Per-IP rate limiting with configurable limits
-- **Image Size Limits**: Configurable maximum image size and dimensions
-- **Timeout Handling**: Context-based timeouts for all operations
-- **SSRF Protection**: Basic protection against Server-Side Request Forgery
-- **Error Handling**: Structured error responses without sensitive information
-
 ## Monitoring
 
-- **Health Checks**: Multiple health check endpoints for different purposes
-- **Metrics**: Prometheus metrics available at `/metrics`
-- **Structured Logging**: JSON-formatted logs with request correlation
+- **Health Checks**: Kubernetes-ready health check endpoints:
+  - `/api/v1/health` - General health check
+  - `/api/v1/ready` - Readiness probe endpoint
+  - `/api/v1/live` - Liveness probe endpoint
+- **Metrics**: Prometheus metrics available at `/metrics` for cluster monitoring
+- **Structured Logging**: JSON-formatted logs with request correlation for centralized logging
 - **Performance Tracking**: Processing time metrics for all operations
 
 ## Development
-
-### Running Tests
-
-```bash
-go test ./...
-```
 
 ### Building
 
 ```bash
 go build -o bin/face-recognition-api cmd/api/main.go
+```
+
+### Docker Build
+
+```bash
+docker build -t face-recognition-api:latest .
 ```
 
 ### Code Quality
@@ -217,7 +210,7 @@ The project follows Go best practices:
 - Proper error handling
 - Context usage for cancellation
 - Structured logging
-- Comprehensive testing
+- Clean architecture patterns
 
 ## License
 
